@@ -262,6 +262,8 @@ private:
 	void _UninitFunctionProvider();
 
 	BOOL _IsKeyEaten(ITfContext *pContext, WPARAM wParam);
+	QuoteResult _QuoteKeyDown(WPARAM wParam, BOOL eaten);
+	QuoteResult _QuoteKeyUp(WPARAM wParam);
 
 	CComPtr<ITfThreadMgr> _pThreadMgr;
 	TfClientId _ClientId;
@@ -347,6 +349,11 @@ public:
 	BOOL purgedicmode;		//辞書削除モード
 	BOOL hintmode;			//ヒントモード
 	BOOL reconversion;		//再変換
+	QuoteState quotestate;	//キー透過の状態
+	WPARAM quotearmvk;		//キー透過キー (ARMED 中に押されたキー)
+	BOOL quotearmheld;		//キー透過キーが押下中か
+	WPARAM quotevk;			//透過中のキー
+	WPARAM quoteupvk;		//透過済みのキー (KeyUp の重複呼び出しを透過するため)
 
 	//動作設定
 	WCHAR cx_fontname[LF_FACESIZE];	//候補一覧のフォント設定(フォント名)

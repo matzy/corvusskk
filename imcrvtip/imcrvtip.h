@@ -15,6 +15,22 @@ enum InputMode
 	im_ascii			//ASCII
 };
 
+//キー透過の状態
+enum QuoteState
+{
+	qs_idle,			//通常
+	qs_armed,			//キー透過キー押下後、次のキー待ち
+	qs_passing			//次の通常キーをアプリへ透過中
+};
+
+//キー透過の判定結果
+enum QuoteResult
+{
+	qr_none,			//通常処理
+	qr_eat,				//IME が処理 (キー透過キーの押下)
+	qr_pass				//アプリへ透過
+};
+
 #define CKEYMAPNUM		0x80	// 0x00-0x7F
 #define VKEYMAPNUM		0x100	// 0x00-0xFF
 
@@ -23,6 +39,7 @@ enum InputMode
 
 #define SKK_KANA		0x71	// かな／カナ	q
 #define SKK_CONV_CHAR	0x11	// ｶﾅ全英変換	c-q
+#define SKK_QUOTE		0x16	// キー透過		c-v(SYN)
 #define SKK_JLATIN		0x4C	// 全英			L
 #define SKK_ASCII		0x6C	// アスキー		l
 #define SKK_JMODE		0x0A	// ひらがな		c-j(LF)

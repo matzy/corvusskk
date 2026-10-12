@@ -607,8 +607,12 @@ void CTextService::_ResetStatus()
 	purgedicmode = FALSE;
 	hintmode = FALSE;
 	reconversion = FALSE;
+	quotestate = qs_idle;
+	quotearmvk = 0;
+	quotearmheld = FALSE;
+	quotevk = 0;
+	quoteupvk = 0;
 
-	roman.clear();
 	kana.clear();
 	okuriidx = 0;
 	reconvtext.clear();

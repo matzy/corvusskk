@@ -229,6 +229,7 @@
 #define IDC_EDIT_DOWN                           4231
 #define IDC_EDIT_PASTE                          4232
 #define IDC_EDIT_RECONVERT                      4233
+#define IDC_EDIT_QUOTE                          4234
 #define IDC_EDIT_KEYMAP_TEST_VKEY               4299
 
 #define IDC_LIST_CONVPOINT                      5001

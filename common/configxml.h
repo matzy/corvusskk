@@ -176,6 +176,7 @@ extern LPCWSTR SectionVKeyMap;
 
 extern LPCWSTR ValueKeyMapKana;
 extern LPCWSTR ValueKeyMapConvChar;
+extern LPCWSTR ValueKeyMapQuote;
 extern LPCWSTR ValueKeyMapJLatin;
 extern LPCWSTR ValueKeyMapAscii;
 extern LPCWSTR ValueKeyMapJMode;

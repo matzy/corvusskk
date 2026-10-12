@@ -817,6 +817,10 @@ HRESULT CTextService::_HandleControl(TfEditCookie ec, ITfContext *pContext, BYTE
 		return S_OK;
 		break;
 
+	case SKK_QUOTE:
+		return S_OK;
+		break;
+
 	case SKK_LEFT:
 		if (showentry)
 		{

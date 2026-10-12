@@ -9,6 +9,28 @@ static const GUID c_guidPreservedKeyOnOff[PRESERVEDKEY_NUM] = {c_guidPreservedKe
 static LPCWSTR c_PrivateModeKeyDesc[PRIVATEMODEKEY_NUM] = {L"Private ON", L"Private OFF"};
 static const GUID c_guidPrivateModeKeyOnOff[PRIVATEMODEKEY_NUM] = {c_guidPrivateModeKeyOn, c_guidPrivateModeKeyOff};
 
+//キー透過で透過させない修飾キー
+static BOOL _IsModifierVK(WPARAM wParam)
+{
+	switch (wParam)
+	{
+	case VK_SHIFT:
+	case VK_CONTROL:
+	case VK_MENU:
+	case VK_LSHIFT:
+	case VK_RSHIFT:
+	case VK_LCONTROL:
+	case VK_RCONTROL:
+	case VK_LMENU:
+	case VK_RMENU:
+	case VK_LWIN:
+	case VK_RWIN:
+		return TRUE;
+	default:
+		return FALSE;
+	}
+}
+
 BOOL CTextService::_IsKeyEaten(ITfContext *pContext, WPARAM wParam)
 {
 	if (_IsKeyboardDisabled())
@@ -49,6 +71,7 @@ BOOL CTextService::_IsKeyEaten(ITfContext *pContext, WPARAM wParam)
 		{
 		case SKK_JMODE:
 		case SKK_RECONVERT:
+		case SKK_QUOTE:
 			return TRUE;
 			break;
 		default:
@@ -66,6 +89,7 @@ BOOL CTextService::_IsKeyEaten(ITfContext *pContext, WPARAM wParam)
 		case SKK_ASCII:
 		case SKK_ABBREV:
 		case SKK_RECONVERT:
+		case SKK_QUOTE:
 			return TRUE;
 			break;
 		case SKK_DIRECT:
@@ -86,6 +110,7 @@ BOOL CTextService::_IsKeyEaten(ITfContext *pContext, WPARAM wParam)
 		case SKK_JLATIN:
 		case SKK_ASCII:
 		case SKK_RECONVERT:
+		case SKK_QUOTE:
 			return TRUE;
 			break;
 		case SKK_DIRECT:
@@ -128,6 +153,88 @@ BOOL CTextService::_IsKeyEaten(ITfContext *pContext, WPARAM wParam)
 	return FALSE;
 }
 
+//キー透過の状態遷移
+//TSF は OnTestKeyDown/OnTestKeyUp が FALSE を返すと OnKeyDown/OnKeyUp を呼ばないため、
+//どちらから何回呼ばれても同じ結果になるようにする
+QuoteResult CTextService::_QuoteKeyDown(WPARAM wParam, BOOL eaten)
+{
+	if (_IsModifierVK(wParam))
+	{
+		return qr_none;
+	}
+
+	switch (quotestate)
+	{
+	case qs_armed:
+		if (wParam == quotearmvk && quotearmheld)
+		{
+			return qr_eat;
+		}
+		quotestate = qs_passing;
+		quotearmvk = 0;
+		quotearmheld = FALSE;
+		quotevk = wParam;
+		quoteupvk = 0;
+		return qr_pass;
+	case qs_passing:
+		if (wParam == quotevk)
+		{
+			return qr_pass;
+		}
+		quotestate = qs_idle;
+		quotevk = 0;
+		break;
+	default:
+		break;
+	}
+
+	quoteupvk = 0;
+
+	WCHAR ch = _GetCh((BYTE)wParam);
+	BYTE sf = _GetSf((BYTE)wParam, ch);
+
+	if (eaten && sf == SKK_QUOTE && !_IsComposing() && roman.empty() && kana.empty() && !inputkey)
+	{
+		quotestate = qs_armed;
+		quotearmvk = wParam;
+		quotearmheld = TRUE;
+		return qr_eat;
+	}
+
+	return qr_none;
+}
+
+QuoteResult CTextService::_QuoteKeyUp(WPARAM wParam)
+{
+	switch (quotestate)
+	{
+	case qs_armed:
+		if (wParam == quotearmvk)
+		{
+			quotearmheld = FALSE;
+		}
+		return qr_none;
+	case qs_passing:
+		if (wParam == quotevk)
+		{
+			quotestate = qs_idle;
+			quotevk = 0;
+			quoteupvk = wParam;
+			return qr_pass;
+		}
+		break;
+	default:
+		break;
+	}
+
+	if (quoteupvk != 0 && wParam == quoteupvk)
+	{
+		return qr_pass;
+	}
+
+	return qr_none;
+}
+
 STDAPI CTextService::OnSetFocus(BOOL fForeground)
 {
 	return S_OK;
@@ -142,11 +249,25 @@ STDAPI CTextService::OnTestKeyDown(ITfContext *pic, WPARAM wParam, LPARAM lParam
 
 	_GetKeyboardState();
 
-	*pfEaten = _IsKeyEaten(pic, wParam);
+	BOOL eaten = _IsKeyEaten(pic, wParam);
+	QuoteResult qr = _QuoteKeyDown(wParam, eaten);
+
+	switch (qr)
+	{
+	case qr_eat:
+		*pfEaten = TRUE;
+		break;
+	case qr_pass:
+		*pfEaten = FALSE;
+		break;
+	default:
+		*pfEaten = eaten;
+		break;
+	}
 
 	_EndInputModeWindow();
 
-	if (!_IsKeyboardDisabled() && _IsKeyboardOpen() && !_IsComposing())
+	if (qr == qr_none && !_IsKeyboardDisabled() && _IsKeyboardOpen() && !_IsComposing())
 	{
 		WCHAR ch = _GetCh((BYTE)wParam);
 		if (_IsKeyVoid(ch, (BYTE)wParam))
@@ -167,7 +288,16 @@ STDAPI CTextService::OnKeyDown(ITfContext *pic, WPARAM wParam, LPARAM lParam, BO
 
 	_GetKeyboardState();
 
-	*pfEaten = _IsKeyEaten(pic, wParam);
+	BOOL eaten = _IsKeyEaten(pic, wParam);
+	QuoteResult qr = _QuoteKeyDown(wParam, eaten);
+
+	if (qr != qr_none)
+	{
+		*pfEaten = (qr == qr_eat);
+		return S_OK;
+	}
+
+	*pfEaten = eaten;
 
 	if (*pfEaten)
 	{
@@ -186,7 +316,8 @@ STDAPI CTextService::OnTestKeyUp(ITfContext *pic, WPARAM wParam, LPARAM lParam, 
 
 	_GetKeyboardState();
 
-	*pfEaten = _IsKeyEaten(pic, wParam);
+	BOOL eaten = _IsKeyEaten(pic, wParam);
+	*pfEaten = (_QuoteKeyUp(wParam) == qr_pass) ? FALSE : eaten;
 
 	return S_OK;
 }
@@ -200,7 +331,8 @@ STDAPI CTextService::OnKeyUp(ITfContext *pic, WPARAM wParam, LPARAM lParam, BOOL
 
 	_GetKeyboardState();
 
-	*pfEaten = _IsKeyEaten(pic, wParam);
+	BOOL eaten = _IsKeyEaten(pic, wParam);
+	*pfEaten = (_QuoteKeyUp(wParam) == qr_pass) ? FALSE : eaten;
 
 	return S_OK;
 }

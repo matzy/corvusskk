@@ -11,6 +11,7 @@ static const struct {
 {
 	{SKK_KANA,		ValueKeyMapKana},
 	{SKK_CONV_CHAR,	ValueKeyMapConvChar},
+	{SKK_QUOTE,		ValueKeyMapQuote},
 	{SKK_JLATIN,	ValueKeyMapJLatin},
 	{SKK_ASCII,		ValueKeyMapAscii},
 	{SKK_JMODE,		ValueKeyMapJMode},
@@ -497,6 +498,7 @@ void CTextService::_LoadCKeyMap()
 		case SKK_DOWN:
 		case SKK_PASTE:
 		case SKK_RECONVERT:
+		case SKK_QUOTE:
 			for (WCHAR ch = 0x01; ch < CKEYMAPNUM; ch++)
 			{
 				key[0] = ch;
@@ -596,6 +598,7 @@ void CTextService::_LoadVKeyMap()
 		case SKK_DOWN:
 		case SKK_PASTE:
 		case SKK_RECONVERT:
+		case SKK_QUOTE:
 			for (int j = 0; j < _countof(pkeymaps); j++)
 			{
 				for (WCHAR ch = 0x01; ch < VKEYMAPNUM; ch++)

@@ -140,7 +140,8 @@
   </section>
   <section name="keymap">
     <key name="kana" value="q" />
-    <key name="convchar" value="\cq" />
+    <key name="convchar" value="" />
+    <key name="quote" value="\cq" />
     <key name="jlatin" value="L" />
     <key name="ascii" value="l" />
     <key name="jmode" value="" />
@@ -170,6 +171,7 @@
   <section name="vkeymap">
     <key name="kana" value="\x71" />
     <key name="convchar" value="\x72" />
+    <key name="quote" value="" />
     <key name="jlatin" value="\x74" />
     <key name="ascii" value="\x75" />
     <key name="jmode" value="C\x4A|\x73" />

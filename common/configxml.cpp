@@ -182,6 +182,7 @@ LPCWSTR SectionVKeyMap = L"vkeymap";
 
 LPCWSTR ValueKeyMapKana = L"kana";
 LPCWSTR ValueKeyMapConvChar = L"convchar";
+LPCWSTR ValueKeyMapQuote = L"quote";
 LPCWSTR ValueKeyMapJLatin = L"jlatin";
 LPCWSTR ValueKeyMapAscii = L"ascii";
 LPCWSTR ValueKeyMapJMode = L"jmode";

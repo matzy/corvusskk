@@ -18,6 +18,7 @@ int lua_search_skk_dictionary(lua_State *L);
 int lua_search_user_dictionary(lua_State *L);
 int lua_search_skk_server(lua_State *L);
 int lua_search_skk_server_info(lua_State *L);
+int lua_search_google_cgiapi(lua_State *L);
 int lua_search_unicode(lua_State *L);
 int lua_search_jisx0213(lua_State *L);
 int lua_search_jisx0208(lua_State *L);
@@ -59,6 +60,12 @@ void StartConnectSKKServer();
 void DisconnectSKKServer();
 void CleanUpSKKServer();
 std::wstring GetSKKServerInfo(CHAR req);
+
+// SearchGoogleCGIAPI
+std::wstring SearchGoogleCGIAPI(const std::wstring &searchkey);
+void SetGoogleCGIAPIConfig(BOOL enable, const std::wstring &url, DWORD timeout, DWORD wait, const std::wstring &annotation, BOOL privateSkip);
+void SetGoogleCGIAPIPrivate(BOOL privateSearch);
+void CleanUpGoogleCGIAPI();
 
 // Server
 std::thread ServerStart();

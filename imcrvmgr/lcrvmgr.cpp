@@ -65,6 +65,22 @@ int lua_search_skk_server_info(lua_State *L)
 	return 2;
 }
 
+int lua_search_google_cgiapi(lua_State *L)
+{
+	std::wstring candidate;
+
+	if (lua_isstring(L, 1))
+	{
+		std::wstring searchkey = U8TOWC(lua_tostring(L, 1));
+
+		candidate = SearchGoogleCGIAPI(searchkey);
+	}
+
+	lua_pushstring(L, WCTOU8(candidate));
+
+	return 1;
+}
+
 int lua_search_unicode(lua_State *L)
 {
 	std::wstring candidate;

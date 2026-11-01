@@ -19,13 +19,16 @@ void ServerProc(WCHAR command, const std::wstring &argument, std::wstring &resul
 	switch (command)
 	{
 	case REQ_SEARCH:
+	case REQ_SEARCH_PRIVATE:
 		if (!std::regex_match(argument, research)) break;
 
 		key = std::regex_replace(argument, research, L"$1");
 		keyorg = std::regex_replace(argument, research, L"$2");
 		okuri = std::regex_replace(argument, research, L"$3");
 
+		SetGoogleCGIAPIPrivate(command == REQ_SEARCH_PRIVATE);
 		SearchDictionary(key, okuri, sc);
+		SetGoogleCGIAPIPrivate(FALSE);
 
 		if (!sc.empty())
 		{

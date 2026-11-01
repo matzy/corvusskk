@@ -214,6 +214,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		CleanUpSKKServer();
 
+		CleanUpGoogleCGIAPI();
+
 		UninitLua();
 
 		StartSaveUserDic(FALSE);

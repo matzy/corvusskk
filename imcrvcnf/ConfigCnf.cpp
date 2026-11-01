@@ -186,6 +186,15 @@ BOOL SaveConfigXml(HWND hPropSheetDlg)
 			WriterEndSection(pWriter);
 		}
 
+		//googlecgiapi
+		{
+			WriterStartSection(pWriter, SectionGoogleCGIAPI);
+
+			SaveDictionary1GoogleCGIAPI(pWriter, PROPSHEET_IDTOHWND(hPropSheetDlg, IDD_DIALOG_DICTIONARY1));
+
+			WriterEndSection(pWriter);
+		}
+
 		//userdict
 		{
 			WriterStartSection(pWriter, SectionUserDict);

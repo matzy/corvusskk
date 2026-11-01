@@ -43,6 +43,10 @@
 #define IDC_EDIT_SKKSRV_HOST                    1054
 #define IDC_EDIT_SKKSRV_PORT                    1055
 #define IDC_EDIT_SKKSRV_TIMEOUT                 1056
+#define IDC_CHECKBOX_GOOGLE                     1061
+#define IDC_EDIT_GOOGLE_WAIT                    1062
+#define IDC_EDIT_GOOGLE_TIMEOUT                 1063
+#define IDC_CHECKBOX_GOOGLE_PRIVATE             1064
 
 #define IDC_EDIT_SKK_DIC_URL                    1101
 

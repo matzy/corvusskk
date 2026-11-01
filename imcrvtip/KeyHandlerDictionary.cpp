@@ -46,6 +46,12 @@ void CTextService::_SearchDic(WCHAR command)
 	candidates.clear();
 	candidates.shrink_to_fit();
 
+	//プライベートモードでは辞書管理プロセスに伝える (Google CGI APIなど外部に問い合わせる検索源を使わないため)
+	if (command == REQ_SEARCH && _IsPrivateMode())
+	{
+		command = REQ_SEARCH_PRIVATE;
+	}
+
 	_StartManager();
 
 	_ConnectDic();

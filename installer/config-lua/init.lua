@@ -1169,6 +1169,11 @@ local function skk_search(key, okuri)
 	-- SKK辞書サーバー検索
 	ret = ret .. crvmgr.search_skk_server(key)
 
+	-- Google CGI API (送りなしのみ)
+	if (okuri == "" and crvmgr.search_google_cgiapi) then
+		ret = ret .. crvmgr.search_google_cgiapi(key)
+	end
+
 	if (okuri == "") then
 		-- Unicodeコードポイント変換
 		ret = ret .. crvmgr.search_unicode(key)

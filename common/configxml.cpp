@@ -53,6 +53,19 @@ LPCWSTR ValueServerPort = L"port";
 LPCWSTR ValueServerEncoding = L"encoding";
 LPCWSTR ValueServerTimeOut = L"timeout";
 
+//google cgi api section
+
+LPCWSTR SectionGoogleCGIAPI = L"googlecgiapi";
+
+//google cgi api keys
+
+LPCWSTR ValueGoogleCGIAPIEnable = L"enable";
+LPCWSTR ValueGoogleCGIAPIUrl = L"url";
+LPCWSTR ValueGoogleCGIAPITimeOut = L"timeout";
+LPCWSTR ValueGoogleCGIAPIWait = L"wait";
+LPCWSTR ValueGoogleCGIAPIAnnotation = L"annotation";
+LPCWSTR ValueGoogleCGIAPIPrivateSkip = L"privateskip";
+
 //userdict section
 
 LPCWSTR SectionUserDict = L"userdict";

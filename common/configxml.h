@@ -58,6 +58,7 @@ extern LPCWSTR ValueGoogleCGIAPIUrl;
 extern LPCWSTR ValueGoogleCGIAPITimeOut;
 extern LPCWSTR ValueGoogleCGIAPIWait;
 extern LPCWSTR ValueGoogleCGIAPIAnnotation;
+extern LPCWSTR ValueGoogleCGIAPIPrivateSkip;
 
 //userdict section
 

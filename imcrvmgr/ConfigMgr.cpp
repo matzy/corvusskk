@@ -278,6 +278,7 @@ void LoadConfig(BOOL sysexit)
 		DWORD gctimeout;
 		DWORD gcwait;
 		std::wstring gcannotation;
+		BOOL gcprivateskip;
 
 		ReadValue(pathconfigxml, SectionGoogleCGIAPI, ValueGoogleCGIAPIEnable, strxmlval);
 		gcenable = (_wtoi(strxmlval.c_str()) == TRUE) ? TRUE : FALSE;
@@ -295,7 +296,11 @@ void LoadConfig(BOOL sysexit)
 
 		ReadValue(pathconfigxml, SectionGoogleCGIAPI, ValueGoogleCGIAPIAnnotation, gcannotation, L"G");
 
-		SetGoogleCGIAPIConfig(gcenable, gcurl, gctimeout, gcwait, gcannotation);
+		//プライベートモードで使用しない。"0" のときだけ無効 (未設定・空・不正な値は有効のまま)
+		ReadValue(pathconfigxml, SectionGoogleCGIAPI, ValueGoogleCGIAPIPrivateSkip, strxmlval, L"1");
+		gcprivateskip = (strxmlval == L"0") ? FALSE : TRUE;
+
+		SetGoogleCGIAPIConfig(gcenable, gcurl, gctimeout, gcwait, gcannotation, gcprivateskip);
 	}
 
 	ReadValue(pathconfigxml, SectionUserDict, ValueBackupDir, strxmlval);

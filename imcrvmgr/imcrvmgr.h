@@ -63,7 +63,8 @@ std::wstring GetSKKServerInfo(CHAR req);
 
 // SearchGoogleCGIAPI
 std::wstring SearchGoogleCGIAPI(const std::wstring &searchkey);
-void SetGoogleCGIAPIConfig(BOOL enable, const std::wstring &url, DWORD timeout, DWORD wait, const std::wstring &annotation);
+void SetGoogleCGIAPIConfig(BOOL enable, const std::wstring &url, DWORD timeout, DWORD wait, const std::wstring &annotation, BOOL privateSkip);
+void SetGoogleCGIAPIPrivate(BOOL privateSearch);
 void CleanUpGoogleCGIAPI();
 
 // Server

@@ -64,6 +64,7 @@ LPCWSTR ValueGoogleCGIAPIUrl = L"url";
 LPCWSTR ValueGoogleCGIAPITimeOut = L"timeout";
 LPCWSTR ValueGoogleCGIAPIWait = L"wait";
 LPCWSTR ValueGoogleCGIAPIAnnotation = L"annotation";
+LPCWSTR ValueGoogleCGIAPIPrivateSkip = L"privateskip";
 
 //userdict section
 

@@ -16,6 +16,7 @@
     <key name="timeout" value="3000" />
     <key name="wait" value="300" />
     <key name="annotation" value="G" />
+    <key name="privateskip" value="1" />
   </section>
   <section name="userdict">
     <key name="backupdir" value="%APPDATA%\CorvusSKK" />

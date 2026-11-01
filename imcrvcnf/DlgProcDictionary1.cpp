@@ -82,6 +82,7 @@ INT_PTR CALLBACK DlgProcDictionary1(HWND hDlg, UINT message, WPARAM wParam, LPAR
 		SetDlgItemTextW(hDlg, IDC_EDIT_SKKSRV_TIMEOUT, strxmlval.c_str());
 
 		LoadCheckButton(hDlg, IDC_CHECKBOX_GOOGLE, SectionGoogleCGIAPI, ValueGoogleCGIAPIEnable);
+		LoadCheckButton(hDlg, IDC_CHECKBOX_GOOGLE_PRIVATE, SectionGoogleCGIAPI, ValueGoogleCGIAPIPrivateSkip, L"1");
 
 		ReadValue(pathconfigxml, SectionGoogleCGIAPI, ValueGoogleCGIAPIWait, strxmlval);
 		if (strxmlval.empty()) strxmlval = defaultGoogleWait;
@@ -255,6 +256,7 @@ INT_PTR CALLBACK DlgProcDictionary1(HWND hDlg, UINT message, WPARAM wParam, LPAR
 
 		case IDC_CHECKBOX_SKKSRV:
 		case IDC_CHECKBOX_GOOGLE:
+		case IDC_CHECKBOX_GOOGLE_PRIVATE:
 			PropSheet_Changed(GetParent(hDlg), hDlg);
 			return TRUE;
 
@@ -417,6 +419,7 @@ void SaveDictionary1GoogleCGIAPI(IXmlWriter *pWriter, HWND hDlg)
 	WCHAR num[16] = {};
 
 	SaveCheckButton(pWriter, hDlg, IDC_CHECKBOX_GOOGLE, ValueGoogleCGIAPIEnable);
+	SaveCheckButton(pWriter, hDlg, IDC_CHECKBOX_GOOGLE_PRIVATE, ValueGoogleCGIAPIPrivateSkip);
 
 	GetDlgItemTextW(hDlg, IDC_EDIT_GOOGLE_WAIT, num, _countof(num));
 	WriterKey(pWriter, ValueGoogleCGIAPIWait, num);

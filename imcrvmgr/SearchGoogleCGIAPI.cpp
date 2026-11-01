@@ -39,6 +39,7 @@ namespace
 		DWORD timeout = GOOGLE_DEFAULT_TIMEOUT;
 		DWORD wait = GOOGLE_DEFAULT_WAIT;
 		std::wstring annotation = GOOGLE_DEFAULT_ANNOTATION;
+		BOOL privateSkip = TRUE;	// プライベートモードの検索では使用しない
 	};
 
 	struct GoogleRequest
@@ -61,6 +62,10 @@ namespace
 		GoogleRequest(const GoogleRequest&) = delete;
 		GoogleRequest &operator=(const GoogleRequest&) = delete;
 	};
+
+	// 現在の検索がプライベートモードか
+	// 辞書検索は単一のパイプスレッドで実行されるので、そのスレッドごとの値にしておく
+	thread_local bool tlPrivateSearch = false;
 
 	std::mutex mtx;
 	GoogleSettings settings;
@@ -621,11 +626,17 @@ namespace
 	}
 }
 
-void SetGoogleCGIAPIConfig(BOOL enable, const std::wstring &url, DWORD timeout, DWORD wait, const std::wstring &annotation)
+void SetGoogleCGIAPIPrivate(BOOL privateSearch)
+{
+	tlPrivateSearch = (privateSearch != FALSE);
+}
+
+void SetGoogleCGIAPIConfig(BOOL enable, const std::wstring &url, DWORD timeout, DWORD wait, const std::wstring &annotation, BOOL privateSkip)
 {
 	GoogleSettings s;
 
 	s.enable = enable ? TRUE : FALSE;
+	s.privateSkip = privateSkip ? TRUE : FALSE;
 	s.url = url.empty() ? GOOGLE_DEFAULT_URL : url;
 	s.timeout = (timeout == 0 || timeout > GOOGLE_MAX_TIMEOUT) ? GOOGLE_DEFAULT_TIMEOUT : timeout;
 	s.wait = (wait > GOOGLE_MAX_WAIT) ? GOOGLE_DEFAULT_WAIT : wait;
@@ -666,6 +677,13 @@ std::wstring SearchGoogleCGIAPI(const std::wstring &searchkey)
 		{
 			return std::wstring();
 		}
+
+		// プライベートモードでは問い合わせない。キャッシュも使わない
+		if (tlPrivateSearch && settings.privateSkip)
+		{
+			return std::wstring();
+		}
+
 		s = settings;
 
 		// キャッシュ

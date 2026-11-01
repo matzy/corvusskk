@@ -146,7 +146,7 @@
     <key name="kana" value="\]" />    <!-- US Keyboard -->
 <!--    <key name="convchar" value="\{" /> -->    <!-- JP Keyboard -->
     <key name="convchar" value="\}" />
-    <key name="quote" value="\cq" />    <!-- US Keyboard -->
+    <key name="quote" value="\cq" />
     <key name="jlatin" value="\|" />
     <key name="ascii" value="\\" />
     <key name="jmode" value="" />

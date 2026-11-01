@@ -39,7 +39,7 @@ enum QuoteResult
 
 #define SKK_KANA		0x71	// かな／カナ	q
 #define SKK_CONV_CHAR	0x11	// ｶﾅ全英変換	c-q
-#define SKK_QUOTE		0x16	// キー透過		c-v(SYN)
+#define SKK_QUOTE		0x16	// キー透過		c-q
 #define SKK_JLATIN		0x4C	// 全英			L
 #define SKK_ASCII		0x6C	// アスキー		l
 #define SKK_JMODE		0x0A	// ひらがな		c-j(LF)

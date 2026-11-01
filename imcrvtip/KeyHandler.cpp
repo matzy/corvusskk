@@ -613,6 +613,7 @@ void CTextService::_ResetStatus()
 	quotevk = 0;
 	quoteupvk = 0;
 
+	roman.clear();
 	kana.clear();
 	okuriidx = 0;
 	reconvtext.clear();

@@ -156,6 +156,8 @@ BOOL CTextService::_IsKeyEaten(ITfContext *pContext, WPARAM wParam)
 //キー透過の状態遷移
 //TSF は OnTestKeyDown/OnTestKeyUp が FALSE を返すと OnKeyDown/OnKeyUp を呼ばないため、
 //どちらから何回呼ばれても同じ結果になるようにする
+//既知の制限: 透過中のキー X を離す前に別のキー Y を押すと idle に戻るため、
+//X の KeyUp は通常の判定になり、アプリに届かないことがある
 QuoteResult CTextService::_QuoteKeyDown(WPARAM wParam, BOOL eaten)
 {
 	if (_IsModifierVK(wParam))

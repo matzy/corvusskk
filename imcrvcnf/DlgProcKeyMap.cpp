@@ -2,6 +2,9 @@
 #include "configxml.h"
 #include "imcrvcnf.h"
 #include "resource.h"
+#include <algorithm>
+#include <string>
+#include <vector>
 
 static const struct {
 	int idd;
@@ -74,7 +77,9 @@ static const struct {
 static LPCWSTR SectionName[2] = {SectionKeyMap, SectionVKeyMap};
 
 INT_PTR CALLBACK DlgProcKeyMap(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam, int no);
-void LoadKeyMap(HWND hDlg, int nIDDlgItem, LPCWSTR lpAppName, LPCWSTR lpKeyName, LPCWSTR lpDefault);
+static bool ReadKeyMap(LPCWSTR lpAppName, LPCWSTR lpKeyName, std::wstring &value);
+static void SplitKeyRe(const std::wstring &keyre, std::vector<std::wstring> &out);
+static std::wstring RemoveUsedKeyRe(LPCWSTR keyre, const std::vector<std::wstring> &used);
 
 INT_PTR CALLBACK DlgProcKeyMap1(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -91,9 +96,30 @@ INT_PTR CALLBACK DlgProcKeyMap(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 	switch (message)
 	{
 	case WM_INITDIALOG:
-		for (int i = 0; i < _countof(KeyMap[no]); i++)
 		{
-			LoadKeyMap(hDlg, KeyMap[no][i].idd, SectionName[no], KeyMap[no][i].keyName, KeyMap[no][i].defaultValue);
+			// config に無いキーの既定値が、config にある他のキーの割り当てと重なる場合は、
+			// 重なる分を外す(旧 config を保存して割り当てが二重になるのを防ぐ)
+			std::vector<std::wstring> values(_countof(KeyMap[no]));
+			std::vector<bool> missing(_countof(KeyMap[no]), false);
+			std::vector<std::wstring> used;
+
+			for (int i = 0; i < _countof(KeyMap[no]); i++)
+			{
+				missing[i] = !ReadKeyMap(SectionName[no], KeyMap[no][i].keyName, values[i]);
+				if (!missing[i])
+				{
+					SplitKeyRe(values[i], used);
+				}
+			}
+
+			for (int i = 0; i < _countof(KeyMap[no]); i++)
+			{
+				if (missing[i])
+				{
+					values[i] = RemoveUsedKeyRe(KeyMap[no][i].defaultValue, used);
+				}
+				SetDlgItemTextW(hDlg, KeyMap[no][i].idd, values[i].c_str());
+			}
 		}
 		return TRUE;
 
@@ -184,14 +210,47 @@ INT_PTR CALLBACK DlgProcKeyMap(HWND hDlg, UINT message, WPARAM wParam, LPARAM lP
 	return FALSE;
 }
 
-void LoadKeyMap(HWND hDlg, int nIDDlgItem, LPCWSTR lpAppName, LPCWSTR lpKeyName, LPCWSTR lpDefault)
+// config \u306B\u30AD\u30FC\u304C\u3042\u308C\u3070 true \u3092\u8FD4\u3057\u3001value \u306B\u5024\u3092\u5165\u308C\u308B
+static bool ReadKeyMap(LPCWSTR lpAppName, LPCWSTR lpKeyName, std::wstring &value)
 {
-	std::wstring strxmlval;
 	LPCWSTR lpDefVal = L"\uFFFF";
 
-	ReadValue(pathconfigxml, lpAppName, lpKeyName, strxmlval, lpDefVal);
-	if (strxmlval == lpDefVal) strxmlval = lpDefault;
-	SetDlgItemTextW(hDlg, nIDDlgItem, strxmlval.c_str());
+	ReadValue(pathconfigxml, lpAppName, lpKeyName, value, lpDefVal);
+	if (value == lpDefVal)
+	{
+		value.clear();
+		return false;
+	}
+	return true;
+}
+
+// "a|b|c" \u3092 "|" \u3067\u5206\u5272\u3057\u3066\u8FFD\u52A0\u3059\u308B
+static void SplitKeyRe(const std::wstring &keyre, std::vector<std::wstring> &out)
+{
+	size_t pos = 0;
+	while (pos <= keyre.size())
+	{
+		size_t next = keyre.find(L'|', pos);
+		if (next == std::wstring::npos) next = keyre.size();
+		if (next > pos) out.push_back(keyre.substr(pos, next - pos));
+		pos = next + 1;
+	}
+}
+
+// keyre \u306E\u5404\u8981\u7D20\u306E\u3046\u3061\u3001used \u306B\u542B\u307E\u308C\u308B\u3082\u306E\u3092\u5916\u3057\u3066 "|" \u3067\u9023\u7D50\u3059\u308B
+static std::wstring RemoveUsedKeyRe(LPCWSTR keyre, const std::vector<std::wstring> &used)
+{
+	std::vector<std::wstring> tokens;
+	std::wstring result;
+
+	SplitKeyRe(keyre, tokens);
+	for (const auto &t : tokens)
+	{
+		if (std::find(used.begin(), used.end(), t) != used.end()) continue;
+		if (!result.empty()) result += L'|';
+		result += t;
+	}
+	return result;
 }
 
 void SaveKeyMap(IXmlWriter *pWriter, HWND hDlg, int nIDDlgItem, LPCWSTR lpKeyName)

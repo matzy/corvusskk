@@ -50,6 +50,9 @@ void SearchDictionary(const std::wstring &searchkey, const std::wstring &okuri, 
 		//SKK辞書サーバー
 		candidate += SearchSKKServer(searchkey);
 
+		//Google CGI API
+		candidate += SearchGoogleCGIAPI(searchkey);
+
 		//Unicodeコードポイント
 		candidate += SearchUnicode(searchkey);
 

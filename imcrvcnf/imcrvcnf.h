@@ -24,6 +24,7 @@ INT_PTR CALLBACK DlgProcSKKDicAddUrl(HWND hDlg, UINT message, WPARAM wParam, LPA
 INT_PTR CALLBACK DlgProcDictionary1(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 void SaveDictionary1(IXmlWriter *pWriter, HWND hDlg);
 void SaveDictionary1Server(IXmlWriter *pWriter, HWND hDlg);
+void SaveDictionary1GoogleCGIAPI(IXmlWriter *pWriter, HWND hDlg);
 // DlgProcDictionary2
 INT_PTR CALLBACK DlgProcDictionary2(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
 void SaveDictionary2(IXmlWriter *pWriter, HWND hDlg);

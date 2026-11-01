@@ -10,6 +10,13 @@
     <key name="encoding" value="0" />
     <key name="timeout" value="1000" />
   </section>
+  <section name="googlecgiapi">
+    <key name="enable" value="0" />
+    <key name="url" value="https://www.google.com/transliterate?langpair=ja-Hira%7Cja&amp;text=" />
+    <key name="timeout" value="3000" />
+    <key name="wait" value="300" />
+    <key name="annotation" value="G" />
+  </section>
   <section name="userdict">
     <key name="backupdir" value="%APPDATA%\CorvusSKK" />
     <key name="backupgen" value="7" />

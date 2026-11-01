@@ -43,6 +43,7 @@ const luaL_Reg luaFuncs[] =
 	{u8"search_user_dictionary", lua_search_user_dictionary},
 	{u8"search_skk_server", lua_search_skk_server},
 	{u8"search_skk_server_info", lua_search_skk_server_info},
+	{u8"search_google_cgiapi", lua_search_google_cgiapi},
 	{u8"search_unicode", lua_search_unicode},
 	{u8"search_jisx0213", lua_search_jisx0213},
 	{u8"search_jisx0208", lua_search_jisx0208},
@@ -268,6 +269,33 @@ void LoadConfig(BOOL sysexit)
 				StartConnectSKKServer();
 			}
 		}
+	}
+
+	//Google CGI API
+	{
+		BOOL gcenable;
+		std::wstring gcurl;
+		DWORD gctimeout;
+		DWORD gcwait;
+		std::wstring gcannotation;
+
+		ReadValue(pathconfigxml, SectionGoogleCGIAPI, ValueGoogleCGIAPIEnable, strxmlval);
+		gcenable = (_wtoi(strxmlval.c_str()) == TRUE) ? TRUE : FALSE;
+
+		ReadValue(pathconfigxml, SectionGoogleCGIAPI, ValueGoogleCGIAPIUrl, gcurl);
+
+		// 空文字列 (保存時に未入力だった場合など) もデフォルトとして扱う
+		ReadValue(pathconfigxml, SectionGoogleCGIAPI, ValueGoogleCGIAPITimeOut, strxmlval, L"3000");
+		if (strxmlval.empty()) strxmlval = L"3000";
+		gctimeout = _wtoi(strxmlval.c_str());
+
+		ReadValue(pathconfigxml, SectionGoogleCGIAPI, ValueGoogleCGIAPIWait, strxmlval, L"300");
+		if (strxmlval.empty()) strxmlval = L"300";
+		gcwait = _wtoi(strxmlval.c_str());
+
+		ReadValue(pathconfigxml, SectionGoogleCGIAPI, ValueGoogleCGIAPIAnnotation, gcannotation, L"G");
+
+		SetGoogleCGIAPIConfig(gcenable, gcurl, gctimeout, gcwait, gcannotation);
 	}
 
 	ReadValue(pathconfigxml, SectionUserDict, ValueBackupDir, strxmlval);

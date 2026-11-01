@@ -47,6 +47,18 @@ extern LPCWSTR ValueServerPort;
 extern LPCWSTR ValueServerEncoding;
 extern LPCWSTR ValueServerTimeOut;
 
+//google cgi api section
+
+extern LPCWSTR SectionGoogleCGIAPI;
+
+//google cgi api keys
+
+extern LPCWSTR ValueGoogleCGIAPIEnable;
+extern LPCWSTR ValueGoogleCGIAPIUrl;
+extern LPCWSTR ValueGoogleCGIAPITimeOut;
+extern LPCWSTR ValueGoogleCGIAPIWait;
+extern LPCWSTR ValueGoogleCGIAPIAnnotation;
+
 //userdict section
 
 extern LPCWSTR SectionUserDict;

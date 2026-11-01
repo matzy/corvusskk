@@ -41,6 +41,9 @@
     <ClCompile Include="SearchDictionary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SearchGoogleCGIAPI.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="SearchSKKServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

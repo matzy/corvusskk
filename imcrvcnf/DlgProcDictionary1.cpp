@@ -6,6 +6,13 @@
 static LPCWSTR defaultHost = L"localhost";
 static LPCWSTR defaultPort = L"1178";
 static LPCWSTR defaultTimeOut = L"1000";
+static LPCWSTR defaultGoogleWait = L"300";
+static LPCWSTR defaultGoogleTimeOut = L"3000";
+static LPCWSTR defaultGoogleAnnotation = L"G";
+
+// 設定画面にない項目。config.xml から読み込み、保存時にそのまま書き戻す
+static std::wstring googleUrl;
+static std::wstring googleAnnotation = defaultGoogleAnnotation;
 
 #define LISTVIEW_COLUMN_COUNT 3
 
@@ -73,6 +80,19 @@ INT_PTR CALLBACK DlgProcDictionary1(HWND hDlg, UINT message, WPARAM wParam, LPAR
 		ReadValue(pathconfigxml, SectionServer, ValueServerTimeOut, strxmlval);
 		if (strxmlval.empty()) strxmlval = defaultTimeOut;
 		SetDlgItemTextW(hDlg, IDC_EDIT_SKKSRV_TIMEOUT, strxmlval.c_str());
+
+		LoadCheckButton(hDlg, IDC_CHECKBOX_GOOGLE, SectionGoogleCGIAPI, ValueGoogleCGIAPIEnable);
+
+		ReadValue(pathconfigxml, SectionGoogleCGIAPI, ValueGoogleCGIAPIWait, strxmlval);
+		if (strxmlval.empty()) strxmlval = defaultGoogleWait;
+		SetDlgItemTextW(hDlg, IDC_EDIT_GOOGLE_WAIT, strxmlval.c_str());
+
+		ReadValue(pathconfigxml, SectionGoogleCGIAPI, ValueGoogleCGIAPITimeOut, strxmlval);
+		if (strxmlval.empty()) strxmlval = defaultGoogleTimeOut;
+		SetDlgItemTextW(hDlg, IDC_EDIT_GOOGLE_TIMEOUT, strxmlval.c_str());
+
+		ReadValue(pathconfigxml, SectionGoogleCGIAPI, ValueGoogleCGIAPIUrl, googleUrl);
+		ReadValue(pathconfigxml, SectionGoogleCGIAPI, ValueGoogleCGIAPIAnnotation, googleAnnotation, defaultGoogleAnnotation);
 
 		return TRUE;
 
@@ -234,12 +254,15 @@ INT_PTR CALLBACK DlgProcDictionary1(HWND hDlg, UINT message, WPARAM wParam, LPAR
 			return TRUE;
 
 		case IDC_CHECKBOX_SKKSRV:
+		case IDC_CHECKBOX_GOOGLE:
 			PropSheet_Changed(GetParent(hDlg), hDlg);
 			return TRUE;
 
 		case IDC_EDIT_SKKSRV_HOST:
 		case IDC_EDIT_SKKSRV_PORT:
 		case IDC_EDIT_SKKSRV_TIMEOUT:
+		case IDC_EDIT_GOOGLE_WAIT:
+		case IDC_EDIT_GOOGLE_TIMEOUT:
 			switch (HIWORD(wParam))
 			{
 			case EN_CHANGE:
@@ -387,4 +410,21 @@ void SaveDictionary1Server(IXmlWriter *pWriter, HWND hDlg)
 
 	GetDlgItemTextW(hDlg, IDC_EDIT_SKKSRV_TIMEOUT, num, _countof(num));
 	WriterKey(pWriter, ValueServerTimeOut, num);
+}
+
+void SaveDictionary1GoogleCGIAPI(IXmlWriter *pWriter, HWND hDlg)
+{
+	WCHAR num[16] = {};
+
+	SaveCheckButton(pWriter, hDlg, IDC_CHECKBOX_GOOGLE, ValueGoogleCGIAPIEnable);
+
+	GetDlgItemTextW(hDlg, IDC_EDIT_GOOGLE_WAIT, num, _countof(num));
+	WriterKey(pWriter, ValueGoogleCGIAPIWait, num);
+
+	GetDlgItemTextW(hDlg, IDC_EDIT_GOOGLE_TIMEOUT, num, _countof(num));
+	WriterKey(pWriter, ValueGoogleCGIAPITimeOut, num);
+
+	// 設定画面にない項目はそのまま書き戻す (保存し直すと config.xml は作り直されるため)
+	WriterKey(pWriter, ValueGoogleCGIAPIUrl, googleUrl.c_str());
+	WriterKey(pWriter, ValueGoogleCGIAPIAnnotation, googleAnnotation.c_str());
 }

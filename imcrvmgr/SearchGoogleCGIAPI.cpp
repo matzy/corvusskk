@@ -184,7 +184,8 @@ namespace
 		{
 			return false;
 		}
-		if (uc.nScheme != INTERNET_SCHEME_HTTP && uc.nScheme != INTERNET_SCHEME_HTTPS)
+		// 入力した読みを送るので、暗号化されない通信は許可しない
+		if (uc.nScheme != INTERNET_SCHEME_HTTPS)
 		{
 			return false;
 		}
@@ -609,8 +610,9 @@ namespace
 				cache[req->key] = result;
 				failCount = 0;
 			}
-			else if (!exiting)
+			else if (!exiting && req->generation == configGeneration)
 			{
+				// 設定が変わる前に始まったリクエストの失敗は、新しい設定のバックオフに数えない
 				if (++failCount >= GOOGLE_FAIL_LIMIT)
 				{
 					backoffUntil = GetTickCount64() + GOOGLE_BACKOFF_MS;
